@@ -43,3 +43,38 @@ Notes and tips
 - Adjust `nginx_eclat.conf` `server_name` and paths to match your server.
 
 If you want, I can generate a `deploy/seed-admin.js` script to create an initial admin and seller, and add instructions to run it on the server.
+
+Docker deployment
+-----------------
+We included a `deploy/docker-compose.yml` and Dockerfiles for backend and frontend. To run everything with Docker compose:
+
+1. Create a `.env` file in `server/` with DB credentials and JWT secret. For local Docker you can set:
+
+```env
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_DATABASE=eclat_db
+# server/.env for backend will be mounted into the backend container via env_file
+```
+
+2. From `deploy/` folder run:
+
+```bash
+cd deploy
+docker compose up -d
+```
+
+3. The stack:
+- MySQL on host port 3306
+- Backend on host port 4000
+- Frontend served on port 80
+- Adminer on 8080 for DB GUI
+
+4. Seed admin/seller inside backend container:
+
+```bash
+docker exec -it eclat_api node scripts/seed-admin.js
+```
+
+Notes:
+- In production, prefer not to expose DB to host or use managed DB provider. Use proper env management for secrets.
+
